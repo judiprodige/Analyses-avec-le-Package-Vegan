@@ -5,41 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analyses avec le Package Vegan</title>
     <style>
+        /* Palette de couleurs naturelles */
+        :root {
+            --primary-color: #2c6e49; /* Vert forêt */
+            --secondary-color: #97bc62; /* Vert clair */
+            --background-color: #f3f9f1; /* Blanc verdâtre */
+            --text-color: #37423d; /* Gris vert foncé */
+            --highlight-color: #f4a261; /* Orange doux */
+            --code-bg-color: #e9f5e7; /* Vert pâle */
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            background-color: #f9f9f9;
-            color: #333;
+            font-family: 'Lora', serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
-        h1, h2, h3 {
-            color: #00509e;
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
         }
-        code {
-            background-color: #e9ecef;
-            padding: 2px 4px;
-            border-radius: 4px;
+
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
         }
-        pre {
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-left: 5px solid #00509e;
-            border-radius: 4px;
-            overflow-x: auto;
+
+        section {
+            margin: 20px auto;
+            max-width: 1000px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        ul {
+
+        h2 {
+            color: var(--primary-color);
+        }
+
+        h3 {
+            color: var(--secondary-color);
+        }
+
+        p, ul, ol {
             margin-bottom: 20px;
         }
+
+        code {
+            background-color: var(--code-bg-color);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        pre {
+            background-color: var(--code-bg-color);
+            padding: 10px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+        }
+
         a {
-            color: #00509e;
+            color: var(--highlight-color);
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
+    <header>
     <h1>Analyses avec le Package Vegan</h1>
     <p>Voici une présentation détaillée de toutes les analyses disponibles avec le package <code>vegan</code> :</p>
 
