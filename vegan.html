@@ -93,160 +93,199 @@
 </head>
 <body>
     <header>
-    <h1>Analyses avec le Package Vegan</h1>
-    <p>Voici une présentation détaillée de toutes les analyses disponibles avec le package <code>vegan</code> :</p>
+        <h1>Analyses avec le Package Vegan</h1>
+        <p>Une ressource complète pour les analyses écologiques communautaires.</p>
+    </header>
 
-    <h2>1. Analyse Multivariée Non Contrainte</h2>
-    <h3>NMDS (Non-metric Multidimensional Scaling)</h3>
-    <p>Visualise les similarités entre échantillons.</p>
-    <pre><code>
+    <section>
+        <h2>1. Analyse Multivariée Non Contrainte</h2>
+        <h3>NMDS (Non-metric Multidimensional Scaling)</h3>
+        <p>Visualise les similarités entre échantillons.</p>
+        <pre><code>
 data(varespec)
 ord <- metaMDS(varespec)
 plot(ord, type = "t")
-    </code></pre>
+        </code></pre>
 
-    <h3>PCA (Principal Component Analysis)</h3>
-    <p>Réduction de la dimensionnalité.</p>
-    <pre><code>
+        <h3>PCA (Principal Component Analysis)</h3>
+        <p>Réduction de la dimensionnalité.</p>
+        <pre><code>
 data(dune)
 mod <- rda(dune ~ 1)
 plot(mod)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>2. Analyse Multivariée Contrainte</h2>
-    <h3>RDA (Redundancy Analysis)</h3>
-    <p>Étudie les relations entre variables environnementales et espèces.</p>
-    <pre><code>
+    <section>
+        <h2>2. Analyse Multivariée Contrainte</h2>
+        <h3>RDA (Redundancy Analysis)</h3>
+        <p>Étudie les relations entre variables environnementales et espèces.</p>
+        <pre><code>
 data(dune)
 data(dune.env)
 mod <- rda(dune ~ Management + Moisture, dune.env)
 plot(mod)
-    </code></pre>
+        </code></pre>
 
-    <h3>CCA (Canonical Correspondence Analysis)</h3>
-    <p>Analyse des relations canoniques.</p>
-    <pre><code>
+        <h3>CCA (Canonical Correspondence Analysis)</h3>
+        <p>Analyse des relations canoniques.</p>
+        <pre><code>
 mod <- cca(dune ~ Management + Moisture, dune.env)
 plot(mod)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>3. Analyse de la Dispersion Beta</h2>
-    <p>Évalue la dispersion au sein et entre groupes.</p>
-    <pre><code>
+    <section>
+        <h2>3. Analyse de la Dispersion Beta</h2>
+        <p>Évalue la dispersion au sein et entre groupes.</p>
+        <pre><code>
 dist <- vegdist(dune)
 groups <- dune.env$Management
 beta <- betadisper(dist, groups)
 anova(beta)
 plot(beta)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>4. Analyse de Similarités (ANOSIM)</h2>
-    <p>Test statistique pour comparer les groupes.</p>
-    <pre><code>
+    <section>
+        <h2>4. Analyse de Similarités (ANOSIM)</h2>
+        <p>Test statistique pour comparer les groupes.</p>
+        <pre><code>
 dune.dist <- vegdist(dune)
 anosim_result <- anosim(dune.dist, dune.env$Management)
 summary(anosim_result)
 plot(anosim_result)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>5. Analyse de Variance Permutationnelle (PERMANOVA)</h2>
-    <h3>adonis2</h3>
-    <p>Teste les différences multivariées entre groupes.</p>
-    <pre><code>
+    <section>
+        <h2>5. Analyse de Variance Permutationnelle (PERMANOVA)</h2>
+        <h3>adonis2</h3>
+        <p>Teste les différences multivariées entre groupes.</p>
+        <pre><code>
 adonis2(dune ~ Management + Moisture, data = dune.env, method = "bray")
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>6. Partition de la Diversité</h2>
-    <h3>Partition additive de la diversité</h3>
-    <p>Compare alpha, bêta et gamma diversités.</p>
-    <pre><code>
+    <section>
+        <h2>6. Partition de la Diversité</h2>
+        <h3>Partition additive de la diversité</h3>
+        <p>Compare alpha, bêta et gamma diversités.</p>
+        <pre><code>
 data(mite)
 adipart(mite, index = "shannon", nsimul = 99)
-    </code></pre>
+        </code></pre>
 
-    <h3>Modèles hiérarchiques</h3>
-    <p>Partition de la diversité sur des niveaux hiérarchiques.</p>
-    <pre><code>
+        <h3>Modèles hiérarchiques</h3>
+        <p>Partition de la diversité sur des niveaux hiérarchiques.</p>
+        <pre><code>
 data(mite)
 hiersimu(mite, FUN = diversity, relative = TRUE, nsimul = 99)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>7. Analyse de Dissimilarités</h2>
-    <h3>Test de Mantel</h3>
-    <p>Corrélation entre matrices de distances.</p>
-    <pre><code>
+    <section>
+        <h2>7. Analyse de Dissimilarités</h2>
+        <h3>Test de Mantel</h3>
+        <p>Corrélation entre matrices de distances.</p>
+        <pre><code>
 data(dune)
 mantel(vegdist(dune), vegdist(dune.env$Moisture))
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>8. Visualisation et Ajustements</h2>
-    <h3>Surfaces et ellipses</h3>
-    <p>Ajustement de surfaces sur des ordinations.</p>
-    <pre><code>
+    <section>
+        <h2>8. Visualisation et Ajustements</h2>
+        <h3>Surfaces et ellipses</h3>
+        <p>Ajustement de surfaces sur des ordinations.</p>
+        <pre><code>
 with(dune.env, ordiellipse(mod, Management, label = TRUE))
 ordisurf(mod, diversity(dune), add = TRUE)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>9. Autres Méthodes Importantes</h2>
-    <h3>MRPP (Multi-Response Permutation Procedure)</h3>
-    <p>Test non paramétrique pour comparer des groupes.</p>
-    <pre><code>
+    <section>
+        <h2>9. Autres Méthodes Importantes</h2>
+        <h3>MRPP (Multi-Response Permutation Procedure)</h3>
+        <p>Test non paramétrique pour comparer des groupes.</p>
+        <pre><code>
 mrpp_result <- mrpp(dune, dune.env$Management)
 summary(mrpp_result)
-    </code></pre>
+        </code></pre>
 
-    <h3>Cluster Analysis</h3>
-    <p>Analyse hiérarchique des regroupements.</p>
-    <pre><code>
+        <h3>Cluster Analysis</h3>
+        <p>Analyse hiérarchique des regroupements.</p>
+        <pre><code>
 hc <- hclust(vegdist(dune))
 plot(hc)
-    </code></pre>
+        </code></pre>
 
-    <h3>Richesse spécifique accumulée</h3>
-    <p>Évalue la richesse en espèces.</p>
-    <pre><code>
+        <h3>Richesse spécifique accumulée</h3>
+        <p>Évalue la richesse en espèces.</p>
+        <pre><code>
 specaccum(dune)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>10. Statistiques de Biodiversité</h2>
-    <h3>Diversité</h3>
-    <p>Calcul d’indices de diversité comme Shannon et Simpson.</p>
-    <pre><code>
+    <section>
+        <h2>10. Statistiques de Biodiversité</h2>
+        <h3>Diversité</h3>
+        <p>Calcul d’indices de diversité comme Shannon et Simpson.</p>
+        <pre><code>
 div <- diversity(dune, index = "shannon")
-    </code></pre>
+        </code></pre>
 
-    <h3>Rarefaction</h3>
-    <p>Comparaison des diversités à des niveaux d’échantillonnage constants.</p>
-    <pre><code>
+        <h3>Rarefaction</h3>
+        <p>Comparaison des diversités à des niveaux d’échantillonnage constants.</p>
+        <pre><code>
 rarefy(dune, sample = 20)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>11. Tests spécifiques</h2>
-    <h3>Permutation test</h3>
-    <p>Pour tester la signification des modèles.</p>
-    <pre><code>
+    <section>
+        <h2>11. Tests spécifiques</h2>
+        <h3>Permutation test</h3>
+        <p>Pour tester la signification des modèles.</p>
+        <pre><code>
 anova(mod, by = "term")
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>12. Analyses Personnalisées</h2>
-    <h3>Simper (Similarity Percentage)</h3>
-    <p>Identifie les espèces contribuant le plus aux différences entre groupes.</p>
-    <pre><code>
+    <section>
+        <h2>12. Analyses Personnalisées</h2>
+        <h3>Simper (Similarity Percentage)</h3>
+        <p>Identifie les espèces contribuant le plus aux différences entre groupes.</p>
+        <pre><code>
 simper(dune, dune.env$Management)
-    </code></pre>
+        </code></pre>
 
-    <h3>Analyse des distributions moyennes</h3>
-    <pre><code>
+        <h3>Analyse des distributions moyennes</h3>
+        <pre><code>
 avgdist(dune, sample = 20, iterations = 100)
-    </code></pre>
+        </code></pre>
+    </section>
 
-    <h2>13. Fonctions Utilitaires</h2>
-    <p>
-        • Tracés avancés : <code>ordiplot</code>, <code>ordihull</code>, <code>ordispider</code>.<br>
-        • Modifications des matrices de données : <code>decostand</code>, <code>vegdist</code>.<br>
-        • Calculs taxonomiques : <code>taxondive</code>.
-    </p>
+    <section>
+        <h2>13. Fonctions Utilitaires</h2>
+        <p>
+            • Tracés avancés : <code>ordiplot</code>, <code>ordihull</code>, <code>ordispider</code>.<br>
+            • Modifications des matrices de données : <code>decostand</code>, <code>vegdist</code>.<br>
+            • Calculs taxonomiques : <code>taxondive</code>.
+        </p>
+    </section>
+    
+    <section>
+        <h2>Référence</h2>
+        <p>Pour plus de détails, consultez la documentation officielle du package Vegan sur CRAN :</p>
+        <p>
+            <a href="https://cran.r-project.org/web/packages/vegan/vegan.pdf" target="_blank">
+                https://cran.r-project.org/web/packages/vegan/vegan.pdf
+            </a>
+        </p>
+    </section>
 
-    <p>Le package <code>vegan</code> offre une couverture complète des analyses nécessaires en écologie communautaire. Pour chaque méthode, vous pouvez consulter les détails spécifiques dans le fichier d’aide ou les vignettes associées.</p>
+    <footer>
+        <p>&copy; 2025 - Judicael OSSE </p>
+    </footer>
 </body>
 </html>
