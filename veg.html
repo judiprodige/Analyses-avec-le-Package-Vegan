@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyses avec le Package Vegan</title>
+    <style>
+        /* Palette de couleurs naturelles */
+        :root {
+            --primary-color: #2c6e49; /* Vert forêt */
+            --secondary-color: #97bc62; /* Vert clair */
+            --background-color: #f3f9f1; /* Blanc verdâtre */
+            --text-color: #37423d; /* Gris vert foncé */
+            --highlight-color: #f4a261; /* Orange doux */
+            --code-bg-color: #e9f5e7; /* Vert pâle */
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        section {
+            margin: 20px auto;
+            max-width: 1000px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: var(--primary-color);
+        }
+
+        h3 {
+            color: var(--secondary-color);
+        }
+
+        p, ul, ol {
+            margin-bottom: 20px;
+        }
+
+        code {
+            background-color: var(--code-bg-color);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        pre {
+            background-color: var(--code-bg-color);
+            padding: 10px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+        }
+
+        a {
+            color: var(--highlight-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Analyses avec le Package Vegan</h1>
+        <p>Une ressource pour les analyses écologiques communautaires.</p>
+    </header>
+
+    <section>
+        <h2>1. Analyse Multivariée Non Contrainte</h2>
+        <h3>NMDS (Non-metric Multidimensional Scaling)</h3>
+        <p>Visualise les similarités entre échantillons.</p>
+        <pre><code>
+data(varespec)
+ord <- metaMDS(varespec)
+plot(ord, type = "t")
+        </code></pre>
+
+        <h3>PCA (Principal Component Analysis)</h3>
+        <p>Réduction de la dimensionnalité.</p>
+        <pre><code>
+data(dune)
+mod <- rda(dune ~ 1)
+plot(mod)
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>2. Analyse Multivariée Contrainte</h2>
+        <h3>RDA (Redundancy Analysis)</h3>
+        <p>Étudie les relations entre variables environnementales et espèces.</p>
+        <pre><code>
+data(dune)
+data(dune.env)
+mod <- rda(dune ~ Management + Moisture, dune.env)
+plot(mod)
+        </code></pre>
+
+        <h3>CCA (Canonical Correspondence Analysis)</h3>
+        <p>Analyse des relations canoniques.</p>
+        <pre><code>
+mod <- cca(dune ~ Management + Moisture, dune.env)
+plot(mod)
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>3. Analyse de la Dispersion Beta</h2>
+        <p>Évalue la dispersion au sein et entre groupes.</p>
+        <pre><code>
+dist <- vegdist(dune)
+groups <- dune.env$Management
+beta <- betadisper(dist, groups)
+anova(beta)
+plot(beta)
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>4. Analyse de Similarités (ANOSIM)</h2>
+        <p>Test statistique pour comparer les groupes.</p>
+        <pre><code>
+dune.dist <- vegdist(dune)
+anosim_result <- anosim(dune.dist, dune.env$Management)
+summary(anosim_result)
+plot(anosim_result)
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>5. Analyse de Variance Permutationnelle (PERMANOVA)</h2>
+        <h3>adonis2</h3>
+        <p>Teste les différences multivariées entre groupes.</p>
+        <pre><code>
+adonis2(dune ~ Management + Moisture, data = dune.env, method = "bray")
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>6. Partition de la Diversité</h2>
+        <h3>Partition additive de la diversité</h3>
+        <p>Compare alpha, bêta et gamma diversités.</p>
+        <pre><code>
+data(mite)
+adipart(mite, index = "shannon", nsimul = 99)
+        </code></pre>
+
+        <h3>Modèles hiérarchiques</h3>
+        <p>Partition de la diversité sur des niveaux hiérarchiques.</p>
+        <pre><code>
+data(mite)
+hiersimu(mite, FUN = diversity, relative = TRUE, nsimul = 99)
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>7. Analyse de Dissimilarités</h2>
+        <h3>Test de Mantel</h3>
+        <p>Corrélation entre matrices de distances.</p>
+        <pre><code>
+data(dune)
+mantel(vegdist(dune), vegdist(dune.env$Moisture))
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>8. Visualisation et Ajustements</h2>
+        <h3>Surfaces et ellipses</h3>
+        <p>Ajustement de surfaces sur des ordinations.</p>
+        <pre><code>
+with(dune.env, ordiellipse(mod, Management, label = TRUE))
+ordisurf(mod, diversity(dune), add = TRUE)
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>9. Statistiques de Biodiversité</h2>
+        <h3>Diversité</h3>
+        <p>Calcul d’indices de diversité comme Shannon et Simpson.</p>
+        <pre><code>
+div <- diversity(dune, index = "shannon")
+        </code></pre>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 - Vegan Analyses Guide</p>
+    </footer>
+</body>
+</html>
