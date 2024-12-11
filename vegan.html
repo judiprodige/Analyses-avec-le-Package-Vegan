@@ -114,28 +114,32 @@ dissimilarity_matrix <- vegdist(varespec, method = "bray")
 # Réalisation de l'ordination NMDS en utilisant directement les données brutes
 nmds_result <- metaMDS(varespec, k = 2, trymax = 100)  # k = 2 pour une projection 2D
 
-# Extraction des scores des espèces pour les afficher plus tard
-species_scores <- scores(nmds_result, display = "species")  # Scores des espèces
-
 # Création de groupes fictifs pour démonstration
 set.seed(123)  # Fixer une graine pour la reproductibilité
 groupes <- sample(c("Groupe 1", "Groupe 2", "Groupe 3"), nrow(varespec), replace = TRUE)
 
 # Attribution de couleurs et de symboles aux groupes
-couleurs <- c("red", "blue", "green")  # Une couleur par groupe
+couleurs <- c("#E41A1C", "#377EB8", "#4DAF4A")  # Couleurs esthétiques (palette ColorBrewer)
 symboles <- c(16, 17, 18)  # Différents symboles (cercle, triangle, losange)
 couleurs_groupes <- couleurs[as.factor(groupes)]  # Assigner les couleurs selon les groupes
 symboles_groupes <- symboles[as.factor(groupes)]  # Assigner les symboles selon les groupes
 
-# Création du graphique NMDS
-plot(nmds_result, type = "n", main = "NMDS avec couleurs et symboles")  # Préparer le canevas
-points(nmds_result, display = "sites", col = couleurs_groupes, pch = symboles_groupes, cex = 1.5)  # Ajouter les points
+# Préparer le graphique NMDS avec des ajustements esthétiques
+plot(nmds_result, type = "n", main = "NMDS : Ordination avec groupes", xlab = "Dimension 1", ylab = "Dimension 2", bty = "l")  # "bty = 'l'" pour un cadre plus léger
+points(nmds_result, display = "sites", col = couleurs_groupes, pch = symboles_groupes, cex = 1.5)  # Points des sites
+
+# Ajouter des labels uniquement pour les espèces les plus pertinentes
+species_scores <- scores(nmds_result, display = "species")
 if (!is.null(species_scores)) {
-  text(species_scores, labels = rownames(species_scores), col = "black", cex = 0.8)  # Afficher les scores des espèces
+  # Sélection des espèces avec une distance importante de l'origine
+  species_to_label <- species_scores[rowSums(abs(species_scores)) > quantile(rowSums(abs(species_scores)), 0.75), ]
+  text(species_to_label, labels = rownames(species_to_label), col = "darkgray", cex = 0.8)
 } else {
   message("Les scores des espèces ne sont pas disponibles.")
 }
-legend("topright", legend = levels(as.factor(groupes)), col = couleurs, pch = symboles, title = "Groupes")  # Ajouter une légende
+
+# Ajouter une légende
+legend("topright", legend = levels(as.factor(groupes)), col = couleurs, pch = symboles, title = "Groupes", bty = "n", cex = 0.8)  # "bty = 'n'" pour une légende sans cadre
     # Qualité de l’ajustement (stress)
     stressplot(resultat_nmds)
     
@@ -167,6 +171,7 @@ plot(mod)
 mod <- cca(dune ~ Management + Moisture, dune.env)
 plot(mod)
         </code></pre>
+        <img src="nmds_plot.png" alt="Graphique NMDS" style="width:100%; max-width:800px; display:block; margin:auto;">
     </section>
 
     <section>
