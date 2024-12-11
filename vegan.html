@@ -89,6 +89,17 @@
             color: white;
             margin-top: 20px;
         }
+        logo {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px; /* Ajustez selon la taille souhaitée */
+    height: 60px; /* Ajustez selon la taille souhaitée */
+    border-radius: 50%; /* Pour créer un cercle */
+    border: 2px solid var(--primary-color); /* Ajout d'une bordure esthétique */
+    background-color: white; /* Couleur de fond */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet esthétique */
+}
     </style>
 </head>
 <body>
@@ -331,8 +342,8 @@ avgdist(dune, sample = 20, iterations = 100)
     </section>
 <footer>
     <p>Merci de votre visite.</p>
-    <img src="logo.png" alt="Logo Signature" style="width:5px; height:auto; display:block; margin:5px auto;">
     <p>&copy; 2025 - Judicael OSSE </p>
+    <img id="logo" src="logo.png" alt="Logo Signature" />
 </footer>
     
 </body>
