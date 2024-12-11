@@ -102,20 +102,43 @@
         <h3>NMDS (Non-metric Multidimensional Scaling)</h3>
         <p>L’analyse multidimensionnelle non métrique (NMDS) est une méthode d’ordination utilisée pour représenter des relations complexes dans des données multidimensionnelles sous la forme de points dans un espace à faible dimension (souvent 2D ou 3D). Contrairement aux méthodes métriques, la NMDS repose sur les rangs des distances entre les points plutôt que sur leurs valeurs absolues, ce qui la rend adaptée aux données écologiques présentant des structures non linéaires.</p>
         <pre><code>
-# Charger le package
+# Charger les packages nécessaires
 library(vegan)
 
-# Exemple de données (abondance des espèces)
-data(varespec)
+# Charger l'exemple de données (abondance des espèces)
+data(varespec)  # Jeu de données d'abondance d'espèces
 
-# Calcul de la matrice de dissimilarité
-matrice_dissim <- vegdist(varespec, method = "bray")
+# Calcul de la matrice de dissimilarité (méthode de Bray-Curtis adaptée à l'écologie)
+dissimilarity_matrix <- vegdist(varespec, method = "bray")
 
-# Réalisation de la NMDS
-resultat_nmds <- metaMDS(matrice_dissim, k = 2, trymax = 100)
+# Réalisation de l'ordination NMDS en utilisant directement les données brutes
+nmds_result <- metaMDS(varespec, k = 2, trymax = 100)  # k = 2 pour une projection 2D
 
-# Visualisation des résultats
-plot(resultat_nmds, type = "t", main = "Ordination NMDS")
+# Extraction des scores des espèces pour les afficher plus tard
+species_scores <- scores(nmds_result, display = "species")  # Scores des espèces
+
+# Création de groupes fictifs pour démonstration
+set.seed(123)  # Fixer une graine pour la reproductibilité
+groupes <- sample(c("Groupe 1", "Groupe 2", "Groupe 3"), nrow(varespec), replace = TRUE)
+
+# Attribution de couleurs et de symboles aux groupes
+couleurs <- c("red", "blue", "green")  # Une couleur par groupe
+symboles <- c(16, 17, 18)  # Différents symboles (cercle, triangle, losange)
+couleurs_groupes <- couleurs[as.factor(groupes)]  # Assigner les couleurs selon les groupes
+symboles_groupes <- symboles[as.factor(groupes)]  # Assigner les symboles selon les groupes
+
+# Création du graphique NMDS
+plot(nmds_result, type = "n", main = "NMDS avec couleurs et symboles")  # Préparer le canevas
+points(nmds_result, display = "sites", col = couleurs_groupes, pch = symboles_groupes, cex = 1.5)  # Ajouter les points
+if (!is.null(species_scores)) {
+  text(species_scores, labels = rownames(species_scores), col = "black", cex = 0.8)  # Afficher les scores des espèces
+} else {
+  message("Les scores des espèces ne sont pas disponibles.")
+}
+legend("topright", legend = levels(as.factor(groupes)), col = couleurs, pch = symboles, title = "Groupes")  # Ajouter une légende
+    # Qualité de l’ajustement (stress)
+    stressplot(resultat_nmds)
+    
         </code></pre>
 
         <h3>PCA (Principal Component Analysis)</h3>
