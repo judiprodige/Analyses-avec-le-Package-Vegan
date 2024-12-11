@@ -89,17 +89,33 @@
             color: white;
             margin-top: 20px;
         }
-        #logo {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px; /* Ajustez selon la taille souhaitée */
-    height: 60px; /* Ajustez selon la taille souhaitée */
-    border-radius: 50%; /* Pour créer un cercle */
-    border: 2px solid var(--primary-color); /* Ajout d'une bordure esthétique */
-    background-color: white; /* Couleur de fond */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour un effet esthétique */
-}
+        /* Style pour le conteneur du logo */
+        .logo-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2c6e49, #97bc62);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style pour l'intérieur du logo */
+        .logo-container svg {
+            width: 50%;
+            height: 50%;
+        }
+
+        /* Initiales ou texte */
+        .logo-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -343,8 +359,16 @@ avgdist(dune, sample = 20, iterations = 100)
 <footer>
     <p>Merci de votre visite.</p>
     <p>&copy; 2025 - Judicael OSSE </p>
-    <img id="logo" src="logo.png" alt="Logo Signature" />
 </footer>
-    
+    <!-- Conteneur du logo -->
+    <div class="logo-container">
+        <!-- Logo en SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" fill="none" stroke="white" stroke-width="4" />
+            <text x="50" y="55" text-anchor="middle" font-size="20" fill="white" font-family="Arial" font-weight="bold">
+                JO
+            </text>
+        </svg>
+    </div>
 </body>
 </html>
