@@ -177,11 +177,64 @@ stressplot(resultat_nmds) # Permet de visualiser la qualité de l’ajustement (
       <p> L’évaluation du stress dans une analyse NMDS permet d’estimer la qualité de l’ajustement du modèle aux données. Une valeur de stress inférieure à 0,05 indique un excellent ajustement, une valeur entre 0,05 et 0,1 représente un bon ajustement, tandis qu’une valeur située entre 0,1 et 0,2 correspond à un ajustement acceptable. </p>
 
         <h3>PCA (Principal Component Analysis)</h3>
-        <p>Réduction de la dimensionnalité.</p>
+        <p><strong>L’Analyse en Composantes Principales (ACP)</strong> est une méthode statistique
+    qui réduit la dimension d’un jeu de données multivariées, tout en conservant l’essentiel
+    de l’information. Elle identifie de nouveaux axes (ou composantes) qui captent la
+    majorité de la variance.L’ACP facilite la détection de groupes, de valeurs atypiques et les relations entre
+    variables. Elle est néanmoins linéaire, sensible aux valeurs extrêmes et peut être
+    difficile à interpréter si plusieurs variables contribuent de façon équivalente.</p>
+
+      <p>
+  La section suivante présente un extrait de code R pour réaliser une analyse NMDS, comprenant la création de graphiques annotés et l’attribution de couleurs et de symboles aux groupes afin d’améliorer la visualisation des résultats.
+</p>
         <pre><code>
-data(dune)
-mod <- rda(dune ~ 1)
-plot(mod)
+# ---- 1) Installation et chargement du package vegan (si nécessaire) ----
+# install.packages("vegan")  # à exécuter une seule fois si vous n’avez pas encore vegan
+library(vegan)
+
+# ---- 2) Chargement d’un jeu de données exemple ----
+# Le package vegan contient plusieurs jeux de données écologiques.
+# Ici, on utilise 'dune', qui représente l'abondance de différentes espèces végétales
+# sur des parcelles de dunes.
+data("dune")
+
+# Aperçu des 5 premières lignes
+head(dune)
+
+# ---- 3) Réalisation de la PCA avec rda() ----
+# rda() sans variables explicatives -> équivalent d’une ACP
+# scale = TRUE permet de centrer et réduire les variables (pratique si elles sont sur des échelles différentes)
+pca_res <- rda(dune, scale = TRUE)
+
+# ---- 4) Résumé et exploration des résultats ----
+# Afficher un résumé succinct
+pca_res
+# Afficher un résumé plus détaillé : importance des axes, scores, etc.
+summary(pca_res)
+
+# ---- 5) Visualisation : Biplot de l'ACP ----
+# Le biplot affiche à la fois les "sites" (échantillons) et les "espèces" (variables)
+biplot(pca_res, main = "ACP sur dune (vegan)")
+
+# ---- 6) Visualisation personnalisée (optionnelle) ----
+# On peut séparer l'affichage des sites et des espèces :
+plot(pca_res, display = c("sites", "species"), type = "n",
+     main = "ACP sur dune : Sites et espèces")
+# Ajouter les points des sites
+points(pca_res, display = "sites", pch = 19, col = "blue")
+# Ajouter le nom des espèces
+text(pca_res, display = "species", col = "red", cex = 0.8, pos = 3)
+
+# ---- 7) Extraction des scores (coordonnées) ----
+# Pour aller plus loin dans l'analyse, on peut extraire les coordonnées des sites et des espèces.
+# Scores des sites (coordonnées sur les axes principaux)
+sites_scores <- scores(pca_res, display = "sites")
+# Scores des espèces (chargeings ou corrélations avec les axes)
+species_scores <- scores(pca_res, display = "species")
+
+head(sites_scores)
+head(species_scores)
+
         </code></pre>
     </section>
 
