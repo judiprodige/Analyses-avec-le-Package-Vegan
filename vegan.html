@@ -164,7 +164,9 @@ if (!is.null(species_scores)) {
 # Ajouter une légende
 legend("topright", legend = levels(as.factor(groupes)), col = couleurs, pch = symboles, title = "Groupes", bty = "n", cex = 0.8)  # "bty = 'n'" pour une légende sans cadre
     # Qualité de l’ajustement (stress)
-    stressplot(resultat_nmds)
+
+nmds_result$stress # ceci donne la valeur du stress
+stressplot(resultat_nmds) # Permet de visualiser la qualité de l’ajustement (stress)
     
         </code></pre>
       <p>Voici le graphique de l'analyse NMDS, illustrant les relations entre les sites et les groupes :</p>
