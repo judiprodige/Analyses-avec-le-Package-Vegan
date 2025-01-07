@@ -241,52 +241,212 @@ head(species_scores)
     <section>
         <h2>2. Analyse Multivariée Contrainte</h2>
         <h3>RDA (Redundancy Analysis)</h3>
-        <p>Étudie les relations entre variables environnementales et espèces.</p>
+        <p>La Redundancy Analysis (RDA) est une méthode d’ordination contraignante (ou « canonique ») étroitement liée à l’ACP (Analyse en Composantes Principales). Alors que l’ACP est une approche non-contraignante (uniquement basée sur la covariance ou la corrélation des variables d’intérêt), la RDA prend en compte des variables explicatives externes pour expliquer la variance du jeu de données.
+</p>
+
+<p>
+    La RDA vise à déterminer la part de la variation dans la matrice de réponse (ex. abondance d’espèces, variables biologiques) qui peut être prédite par des variables environnementales ou explicatives (ex. température, pH, facteurs de site). Elle permet d’identifier quelles variables explicatives sont les plus fortement associées à la distribution ou à la variabilité des observations. La RDA permet d’expliquer (ou de « contraindre ») la structure d’un jeu de données (souvent des abondances d’espèces) par des variables environnementales ou des facteurs externes. Elle est donc très utile pour déterminer quels gradients environnementaux influencent le plus la répartition et l’abondance des espèces, dans la continuité des approches ordinationnelles offertes par le package vegan.
+</p>
+
         <pre><code>
-data(dune)
-data(dune.env)
-mod <- rda(dune ~ Management + Moisture, dune.env)
-plot(mod)
+# ---- 1) Installation et chargement des packages ----
+# install.packages("vegan")   # Décommentez si vous n’avez pas encore vegan
+library(vegan)
+
+# ---- 2) Chargement des jeux de données ----
+data("dune")      # matrice d’abondance d’espèces
+data("dune.env")  # variables environnementales associées
+
+# ---- 3) Exploration rapide des données ----
+head(dune)
+head(dune.env)
+
+# ---- 4) Réalisation de la RDA ----
+# On inclut quelques variables explicatives (ex. Management et Moisture)
+# scale = TRUE peut être utile si les échelles des variables diffèrent beaucoup
+rda_res <- rda(dune ~ Management + Moisture, data = dune.env, scale = TRUE)
+
+# ---- 5) Résumé et exploration des résultats ----
+summary(rda_res)
+# Cela affiche notamment :
+# - Importance des axes (RDA1, RDA2...)
+# - Part de variance expliquée par les variables
+# - Coefficients pour chaque variable explicative
+
+# ---- 6) Visualisation ----
+# Biplot RDA (affiche sites, espèces et variables explicatives)
+plot(rda_res, main = "Redundancy Analysis (RDA) sur dune")
+
+# Pour une personnalisation plus poussée, on peut spécifier "display = ..."
+# et jouer avec les couleurs, symboles, etc.
+# Ex. séparer l’affichage de "sites", "species", et "bp" (biplot arrows):
+plot(rda_res, display = c("sites", "species", "bp"),
+     main = "RDA dune : sites, espèces, variables")
+
+# ---- 7) Extraction de la part de variance expliquée ----
+# Les valeurs propres sont dans rda_res$CCA$eig (axes contraints) et rda_res$CA$eig (axes non contraints)
+prop_explained <- rda_res$CCA$tot.chi / (rda_res$CCA$tot.chi + rda_res$CA$tot.chi)
+paste("Proportion de variance expliquée par les variables :", round(prop_explained * 100, 2), "%")
+
+# ---- 8) Affiner l’analyse (optionnel) ----
+# Par exemple, on peut tester l’effet significatif des variables explicatives par permutation :
+anova(rda_res, by = "term", permutations = 999)
+
         </code></pre>
 
         <h3>CCA (Canonical Correspondence Analysis)</h3>
-        <p>Analyse des relations canoniques.</p>
+        <p>La CCA (Canonical Correspondence Analysis) est une méthode d’ordination canonique (contraignante) largement utilisée en écologie pour relier simultanément la composition des communautés (abondances, présences/absences d’espèces) à des variables environnementales. Elle s’appuie sur le même principe que la Correspondance Analyse (CA) pour gérer des données de type comptage (abondances, fréquences), mais y ajoute une composante « contrainte » par des variables explicatives.
+ La CCA est l’une des méthodes standard pour analyser les relations entre des communautés d’espèces et leurs variables environnementales. Grâce à la fonction cca() du package vegan, on obtient un ordonnancement visuel (biplot) illustrant clairement l’influence des gradients environnementaux, tout en disposant d’outils statistiques (tests de permutations) pour évaluer la significativité de ces gradients.
+        </p>
         <pre><code>
-mod <- cca(dune ~ Management + Moisture, dune.env)
-plot(mod)
+# ---- 1) Installation et chargement du package vegan ----
+# install.packages("vegan")  # Décommentez pour installer si besoin
+library(vegan)
+
+# ---- 2) Chargement des jeux de données exemple ----
+data("dune")      # Abondance d’espèces
+data("dune.env")  # Variables environnementales
+
+head(dune)
+head(dune.env)
+
+# ---- 3) Réalisation de la CCA ----
+# Par exemple, on explique l’abondance d’espèces (dune) par Moisture et Management
+cca_res <- cca(dune ~ Moisture + Management, data = dune.env)
+
+# ---- 4) Résumé et part de variance expliquée ----
+summary(cca_res)
+# Affiche :
+# - Importance des axes (CCA1, CCA2, etc.)
+# - Variance expliquée vs. résiduelle
+# - Corrélation entre variables explicatives et axes
+
+# ---- 5) Visualisation de la CCA ----
+plot(cca_res, main = "Canonical Correspondence Analysis sur dune")
+# Par défaut, on obtient un biplot montrant :
+# - Les sites (points)
+# - Les espèces (labels ou points)
+# - Les variables environnementales (flèches)
+
+# ---- 6) Tests de significativité (optionnel) ----
+# On peut tester l’effet global des variables ou l’effet de chaque variable séparément
+anova(cca_res, permutations = 999)         # Test global
+anova(cca_res, by = "term", permutations = 999)  # Test variable par variable
         </code></pre>
         
     </section>
 
     <section>
         <h2>3. Analyse de la Dispersion Beta</h2>
-        <p>Évalue la dispersion au sein et entre groupes.</p>
+        <p>L’Analyse de la Dispersion Bêta (Beta Dispersion Analysis) est une approche permettant d’évaluer si la variabilité intra-groupe (ou “dispersion”) dans un espace multivarié diffère significativement entre différents groupes. 
+        L’Analyse de la Dispersion Bêta est un outil essentiel pour tester l’homogénéité de la variabilité intra-groupe dans l’espace multivarié (diversité bêta) et compléter ou contrôler un test PERMANOVA (adonis) pour éviter d’attribuer à une différence de « composition moyenne » ce qui pourrait en réalité être une différence de dispersion.<p>
+
+<p>En écologie, elle est couramment utilisée pour comprendre si certains facteurs entraînent non seulement des changements de composition, mais aussi des changements de variabilité interne au sein des groupes.
+        </p>
         <pre><code>
-dist <- vegdist(dune)
-groups <- dune.env$Management
-beta <- betadisper(dist, groups)
-anova(beta)
-plot(beta)
+# ---- 1) Chargement des packages ----
+# install.packages("vegan") # Décommentez si besoin
+library(vegan)
+
+# ---- 2) Jeu de données exemple ----
+data("dune")      # Abondances d'espèces
+data("dune.env")  # Variables environnementales (ex. Management, Moisture...)
+
+# Supposons qu'on s'intéresse à l'effet d'une variable catégorielle,
+# par exemple la variable 'Management' (4 niveaux) dans dune.env
+group_var <- dune.env$Management
+
+# ---- 3) Calcul de la matrice de dissimilarité (ici, Bray-Curtis) ----
+dist_mat <- vegdist(dune, method = "bray")
+
+# ---- 4) betadisper : analyse de la dispersion bêta ----
+dispersion_res <- betadisper(dist_mat, group = group_var)
+
+# Visualisation simple
+plot(dispersion_res, main = "Analyse de la Dispersion Bêta : dune")
+
+# ---- 5) Test de la différence de dispersion entre groupes ----
+permutest_res <- permutest(dispersion_res, permutations = 999)
+permutest_res
+
+# ---- Interprétation des résultats ----
+# - On obtient une pseudo-F et une p-value indiquant si la dispersion
+#   moyenne diffère significativement entre groupes.
         </code></pre>
     </section>
 
     <section>
         <h2>4. Analyse de Similarités (ANOSIM)</h2>
-        <p>Test statistique pour comparer les groupes.</p>
+        <p>L’ANOSIM (Analysis of Similarities) est une méthode non paramétrique permettant d’évaluer si les différences de composition (ou de similarité) entre des groupes prédéfinis sont plus marquées qu’au sein de ces groupes. Elle est particulièrement utilisée en écologie pour tester si la structure d’une communauté (par exemple, l’abondance ou la présence/absence d’espèces) diffère significativement selon un facteur (zone, saison, type de sol, etc.).</p>
         <pre><code>
-dune.dist <- vegdist(dune)
-anosim_result <- anosim(dune.dist, dune.env$Management)
-summary(anosim_result)
-plot(anosim_result)
+# ---- 1) Installation et chargement du package vegan ----
+# install.packages("vegan")  # Décommentez si nécessaire
+library(vegan)
+
+# ---- 2) Chargement des jeux de données exemple ----
+data("dune")      # Abondances d’espèces
+data("dune.env")  # Variables environnementales
+
+# On prend par exemple la variable Management (4 niveaux)
+group_factor <- dune.env$Management
+
+# ---- 3) Calcul de la matrice de dissimilarité (ex. Bray-Curtis) ----
+dist_mat <- vegdist(dune, method = "bray")
+
+# ---- 4) Réalisation de l’ANOSIM ----
+anosim_res <- anosim(dist_mat, grouping = group_factor, permutations = 999)
+
+# ---- 5) Résultats ----
+anosim_res
+# Les principaux éléments renvoyés incluent :
+# - Statistic R : la statistique ANOSIM
+# - Signif. level : la p-value (après permutations)
+
+# ---- 6) Visualisation de l’ANOSIM ----
+plot(anosim_res, main = "ANOSIM - Dune (Bray-Curtis)")
+
+# Le boxplot résultant compare les dissimilarités intra vs inter-groupes.
         </code></pre>
     </section>
 
     <section>
         <h2>5. Analyse de Variance Permutationnelle (PERMANOVA)</h2>
         <h3>adonis2</h3>
-        <p>Teste les différences multivariées entre groupes.</p>
+        <p>La PERMANOVA (ou Permutation ANOVA, souvent mise en œuvre via la fonction adonis() du package vegan en R) est une méthode non paramétrique qui permet de tester l’effet d’un ou plusieurs facteurs explicatifs sur la composition multivariée d’observations. Elle s’appuie sur une matrice de distance (ou de dissimilarité) plutôt que sur des présupposés de normalité et d’homogénéité des variances comme l’ANOVA classique.</p>
         <pre><code>
-adonis2(dune ~ Management + Moisture, data = dune.env, method = "bray")
+a# ---- 1) Installation et chargement des packages ----
+# install.packages("vegan")  # Décommentez si vous n’avez pas encore vegan
+library(vegan)
+
+# ---- 2) Chargement des données ----
+data("dune")      # Matrice d’abondance d’espèces
+data("dune.env")  # Variables environnementales associées
+
+# Aperçu des données
+head(dune)
+head(dune.env)
+
+# ---- 3) Calcul de la matrice de dissimilarité ----
+# Par exemple, on choisit la distance de Bray-Curtis
+dist_mat <- vegdist(dune, method = "bray")
+
+# ---- 4) PERMANOVA via adonis2 (ou adonis dans d’anciennes versions) ----
+# Test de l’effet de deux facteurs (Management, Moisture)
+permanova_res <- adonis2(dist_mat ~ Management + Moisture, data = dune.env, permutations = 999)
+permanova_res
+
+# On obtient :
+# - un tableau indiquant la part de variance expliquée (SumOfSqs),
+# - la pseudo-F,
+# - la p-value basée sur permutations.
+
+# ---- 5) Interpréter les résultats ----
+# Si p-value < 0,05 pour un facteur, on conclut qu’il influence
+# significativement la composition multivariée des échantillons.
+
+# ---- 6) Visualisation (optionnelle) ----
+# On peut utiliser 'metaMDS()' pour une NMDS (ou 'rda()' pour une RDA, etc.)
+# puis colorer les sites selon 'Management' ou 'Moisture' pour un aperçu.
         </code></pre>
     </section>
 
