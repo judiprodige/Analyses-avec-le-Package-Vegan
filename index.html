@@ -344,7 +344,8 @@ plot(anosim_res, main = "ANOSIM - Dune (Bray-Curtis)")
     <section>
         <h2>5. Analyse de Variance Permutationnelle (PERMANOVA)</h2>
         <h3>adonis2</h3>
-        <p>La PERMANOVA (ou Permutation ANOVA) permet de tester l’effet d’un ou plusieurs facteurs explicatifs sur la composition multivariée.</p>
+        <p>La <strong>PERMANOVA</strong> (Permutation Analysis of Variance) est une méthode non paramétrique utilisée pour tester l’effet de facteurs explicatifs sur la structure multivariée d’un jeu de données. Contrairement à l’ANOVA traditionnelle, elle ne repose pas sur l’hypothèse de normalité et utilise des permutations aléatoires pour évaluer la significativité statistique.
+  </p>
         <pre><code>
 library(vegan)
 data("dune")
@@ -362,15 +363,35 @@ permanova_res
 
     <section>
         <h2>6. Partition de la Diversité</h2>
+
+        <p>
+  La <strong>Partition de la Diversité</strong> consiste à décomposer la diversité 
+  globale (gamma) d’un ensemble en différentes composantes (alpha et bêta). 
+  Ce concept est très utile en écologie pour comprendre comment la diversité 
+  s’organise entre et à l’intérieur de différentes unités spatiales ou temporelles 
+  (parcelles, sites, zones biogéographiques, etc.).
+</p>
+        
         <h3>Partition additive de la diversité</h3>
-        <p>Compare alpha, bêta et gamma diversités.</p>
+        <p>
+  La partition additive considère que la diversité totale (γ) peut être décrite 
+  comme la somme de la diversité moyenne α et de la diversité β :
+</p>
+<blockquote>
+  γ = α + β
+</blockquote>
+<p>
         <pre><code>
 data(mite)
 adipart(mite, index = "shannon", nsimul = 99)
         </code></pre>
 
         <h3>Modèles hiérarchiques</h3>
-        <p>Partition de la diversité sur des niveaux hiérarchiques.</p>
+        <p>
+  Lorsque les échantillons sont organisés selon une hiérarchie (plusieurs échelles 
+  de regroupement), on peut utiliser <code>hiersimu()</code> du même package pour 
+  répartir la diversité à différents niveaux.
+</p>
         <pre><code>
 data(mite)
 hiersimu(mite, FUN = diversity, relative = TRUE, nsimul = 99)
@@ -383,12 +404,58 @@ hiersimu(mite, FUN = diversity, relative = TRUE, nsimul = 99)
 
     <section>
         <h2>7. Analyse de Dissimilarités</h2>
+<p>
+  L’<strong>Analyse de Dissimilarités</strong> en écologie consiste à quantifier 
+  à quel point deux sites (ou échantillons) diffèrent l’un de l’autre en termes de 
+  composition (abondances, présence/absence d’espèces, etc.). Les méthodes et tests 
+  associés permettent d’évaluer les liens entre les matrices de dissimilarités, 
+  ou encore de tester l’effet de facteurs environnementaux.
+</p>
+        
         <h3>Test de Mantel</h3>
-        <p>Le test de Mantel évalue la corrélation entre deux matrices de distances.</p>
+        
+        <p>Le <strong>Test de Mantel</strong> évalue la corrélation entre deux matrices 
+  de distances (ou de dissimilarités). Il est particulièrement utile pour 
+  relier des distances écologiques (ex. différences de composition d’espèces) 
+  à des distances environnementales ou géographiques.</p>
         <pre><code>
-data(dune)
-mantel(vegdist(dune), vegdist(dune.env$Moisture))
+# Test de Mantel : corrélation entre deux matrices
+
+# Exemple : Distances écologiques vs Distances environnementales
+data("dune.env")
+# Par exemple, on construit une distance sur une variable environnementale,
+# ici Moisture (trait numérique), transformée en distance euclidienne
+env_dist &lt;- dist(dune.env$Moisture, method = "euclidean")
+
+# Mantel test avec 999 permutations
+mantel_res &lt;- mantel(dist_mat, env_dist, permutations = 999)
+mantel_res
         </code></pre>
+
+        <h3>Comparaison de Matrices Multiples</h3>
+<p>
+  Lorsque plusieurs facteurs sont en jeu, on peut utiliser un 
+  <strong>Test de Mantel Partiel</strong>, permettant de contrôler l’effet 
+  d’une troisième matrice. La fonction <code>mantel.partial()</code> dans 
+  <code>vegan</code> répond à ce besoin.
+</p>
+
+<pre><code>
+# Exemple simple de Mantel partiel
+# Contrôler l’effet de distances géographiques, par ex.
+data("dune")
+data("dune.env")
+
+dist_mat &lt;- vegdist(dune, method = "bray")
+env_dist &lt;- dist(dune.env$Moisture)
+# Supposez qu’on ait une matrice de distances spatiales
+# Ici, hypothétique: dist_spat
+# dist_spat &lt;- dist(xy_coordinates)
+
+# Test de Mantel partiel
+# mantel.partial(D_ecologique, D_environnement, D_spat)
+# mantel.partial(dist_mat, env_dist, dist_spat)
+</code></pre>
         <p><strong>Références Mantel :</strong></p>
         <ul>
           <li>Mantel, N. (1967). The detection of disease clustering and a generalized regression approach. <em>Cancer Research</em>, 27(2), 209-220.</li>
@@ -414,7 +481,14 @@ ordisurf(mod, diversity(dune), add = TRUE)
     <section>
         <h2>9. Autres Méthodes Importantes</h2>
         <h3>MRPP (Multi-Response Permutation Procedure)</h3>
-        <p>Test non paramétrique pour comparer des groupes.</p>
+        <p>
+  Le <strong>MRPP</strong> (Multi-Response Permutation Procedure) est un test 
+  non paramétrique permettant d’évaluer les différences entre deux ou plusieurs 
+  groupes, selon la composition ou la structure multivariée des données. 
+  Cette méthode est particulièrement utile en écologie pour comparer des groupes 
+  (ex. différents traitements, sites ou conditions environnementales) 
+  sans hypothèses fortes sur la distribution des données.
+</p>
         <pre><code>
 mrpp_result <- mrpp(dune, dune.env$Management)
 summary(mrpp_result)
@@ -463,7 +537,12 @@ rarefy(dune, sample = 20)
     <section>
         <h2>11. Tests spécifiques</h2>
         <h3>Permutation test</h3>
-        <p>Pour tester la signification des modèles (ex. <code>anova</code> sur RDA, CCA, etc.).</p>
+        <p>Le <strong>Permutation Test</strong> (ou test par permutations) est une méthode 
+  d’inférence statistique qui ne repose pas sur des hypothèses fortes de distribution 
+  (telles que la normalité). Au lieu de s’appuyer sur une loi théorique (ex. la loi 
+  normale ou F), on génère une distribution empirique de la statistique de test en 
+  permutant de manière aléatoire les étiquettes des données (ou les résidus).
+Pour tester la signification des modèles (ex. <code>anova</code> sur RDA, CCA, etc.).</p>
         <pre><code>
 anova(mod, by = "term")
         </code></pre>
@@ -477,7 +556,12 @@ anova(mod, by = "term")
     <section>
         <h2>12. Analyses Personnalisées</h2>
         <h3>Simper (Similarity Percentage)</h3>
-        <p>Identifie les espèces contribuant le plus aux différences entre groupes.</p>
+        <p>La méthode <strong>SIMPER</strong> (Similarity Percentage) est utilisée pour 
+  identifier quelles variables (souvent des espèces) contribuent le plus aux 
+  différences observées entre deux ou plusieurs groupes, sur la base d’une 
+  mesure de dissimilarité (par exemple, la distance de Bray-Curtis). 
+  Cette approche est largement utilisée en écologie pour comprendre 
+  quelles espèces caractérisent la dissimilarité entre groupes.</p>
         <pre><code>
 simper(dune, dune.env$Management)
         </code></pre>
